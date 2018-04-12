@@ -1,5 +1,3 @@
-from ..web import Links
-
 from . import WebEntity
 from . import Board
 
@@ -11,10 +9,11 @@ class Site (WebEntity):
     """
     default_object = {'boards':[]}
 
-    def __init__ (self):
+    def __init__ (self, links):
         """
-        Initializes the site.
+        Initializes the site, provided a SiteLinks object that will allow this site to generate URLs.
         """
+        self.links = links
         pass
 
     def __repr__ (self):
@@ -28,7 +27,7 @@ class Site (WebEntity):
         """
         Returns an url to the corresponding API json page.
         """
-        return Links.createAPIURL (
+        return self.links.createAPIURL (
             '/boards.json'
         )
 
@@ -37,7 +36,7 @@ class Site (WebEntity):
         """
         Returns an url to the site.
         """
-        return Links.createURL('/')
+        return self.links.createURL('/')
 
     def process (self):
         """
@@ -45,7 +44,7 @@ class Site (WebEntity):
         """
         return map (
             lambda board : Board (
-                str(board['board'])
+                str(board['board']), self
             ),
             self.download_and_decode()['boards']
         )

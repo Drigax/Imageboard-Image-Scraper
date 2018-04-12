@@ -24,12 +24,14 @@ def scrape_images (directory, keep_names, *links):
     """
     Downloads images from links.
     """
-    pool = Pool(num_threads=parameters.num_threads)
-
+    #pool = Pool(num_threads=parameters.num_threads)
+    downloaded = []
     def work (unit):
+        data = []
         if isinstance(unit, Post):
             if not unit.image:
-                return
+                logger.warning('unit %s is not an image.', unit)
+                return 
 
             filename = get_filename (
                 directory, unit, keep_names
@@ -42,21 +44,29 @@ def scrape_images (directory, keep_names, *links):
                 return filename, image_data
 
             logger.debug('%s already downloaded', filename)
-
             return
 
         logger.info('working %r', unit)
         for e in unit.process():
-            pool.push(work, e)
+            value =  work(e)
+            if not value is None:
+                data.append(value)
+            #pool.push(work, e)
+
+        return data
 
     for link in map(classify, links):
-        pool.push(work, link)
-    pool.join()
+        images = work(link)
+        if len(images) > 0:
+            print(downloaded)
+            downloaded.extend(images)
+        #pool.push(work, link)
+    #pool.join()
 
-    logger.info('Join complete.')
+    logger.info('Join complete. %d images found for download.' % (len(downloaded)))
 
-    downloaded = pool.get_results()
-    pool.close()
+    #downloaded = pool.get_results()
+    #pool.close()
 
     logger.info('Setting up directories')
 

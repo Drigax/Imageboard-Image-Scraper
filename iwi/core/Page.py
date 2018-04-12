@@ -33,16 +33,16 @@ class Page (Board):
         """
         Returns an url to the corresponding API json page.
         """
-        return Links.createAPIURL (
+        return self.site.links.createAPIURL (
             '/{self.board}/{self.page}.json'.format(self=self)
         )
 
     @property
-    def url (self):
+    def url (self, siteLink):
         """
         Returns an url to the board page.
         """
-        return Links.createURL (
+        return self.site.links.createURL (
             '/{self.board}/{self.page}'.format(self=self)
         )
 
@@ -55,7 +55,7 @@ class Page (Board):
 
         for thread in page['threads']:
             threads.append (
-                Thread(self.board, thread['posts'][0]['no'])
+                Thread(self.board, thread['posts'][0]['no'], self.site)
             )
 
         return threads

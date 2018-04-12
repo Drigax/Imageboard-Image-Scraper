@@ -1,6 +1,6 @@
 import urlparse
 
-from ..web import Links
+from ..web import Links, FourChanLinks, ArchivedMoeLinks, TheBArchiveLinks
 
 from . import WebEntity, Board, Page, Thread
 
@@ -16,7 +16,7 @@ def classify (url):
         return url
 
     if not isinstance (url, str):
-        raise TypeError ('%s not valid type for 4chan URL' % type(url))
+        raise TypeError ('%s not valid type of imageboard URL' % type(url))
 
     if url.startswith('/'):
         url = url.lstrip('/')
@@ -24,27 +24,38 @@ def classify (url):
     if url.endswith('/'):
         url = url.rstrip('/')
 
-    if not '4chan.org' in url:
-        url = '{}://{}/{}'.format(Links.scheme, Links.netloc, url)
+    siteLink = Links()
+    if '4chan.org' in url:
+        siteLink = FourChanLinks()
+        
+    elif 'archived.moe' in url:
+        siteLink = ArchivedMoeLinks()
+    elif 'thebarchive.com' in url:
+        siteLink = TheBArchiveLinks()
+    else:
+        # if neither site was provied in the url, default to using 4chan links.
+        # Though we should probably remove this, it doesnt make much sense.
+        siteLink = FourChanLinks()
+        url = '{}://{}/{}'.format(siteLink.scheme, siteLink.netloc, url)
 
     if not (
         url.startswith ('http://') or
         url.startswith ('https://')
     ):
-        url = '{}://{}'.format(Links.scheme, url)
+        url = '{}://{}'.format(siteLink.scheme, url)
 
     path  = urlparse.urlparse(url).path
 
-    match = Links.thread_pattern.match(path)
+    match = siteLink.thread_pattern.match(path)
     if match:
-        return Thread(*match.groups())
+        return Thread(*match.groups(), site = siteLink)
 
-    match = Links.page_pattern.match(path)
+    match = siteLink.page_pattern.match(path)
     if match:
-        return Page(*match.groups())
+        return Page(*match.groups(), site = siteLink)
 
-    match = Links.board_pattern.match(path)
+    match = siteLink.board_pattern.match(path)
     if match:
-        return Board(*match.groups())
+        return Board(*match.groups(), site = siteLink)
 
-    raise ValueError ('invalid 4chan URL: %s' % repr(original))
+    raise ValueError ('invalid URL: %s' % repr(original))

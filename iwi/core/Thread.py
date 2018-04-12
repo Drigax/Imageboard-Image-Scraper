@@ -14,12 +14,13 @@ class Thread (WebEntity):
     """
     default_object = {'posts':[]}
 
-    def __init__ (self, board, thread):
+    def __init__ (self, board, thread, site):
         """
         Initializes an instance from a board and a thread number.
         """
         self.board  = board
         self.thread = thread
+        self.site = site
 
     def __repr__ (self):
         """
@@ -37,7 +38,7 @@ class Thread (WebEntity):
         """
         Returns an url to the corresponding API json page.
         """
-        return Links.createAPIURL (
+        return self.site.createAPIURL (
             '/{self.board}/thread/{self.thread}.json'.format(self=self)
         )
 
@@ -46,7 +47,7 @@ class Thread (WebEntity):
         """
         Returns an url to the thread.
         """
-        return Links.createURL (
+        return self.site.createURL (
             '/{self.board}/thread/{self.thread}'.format(self=self)
         )
 
@@ -70,6 +71,7 @@ class Thread (WebEntity):
 
             if post.has_key('tim') and post.has_key('ext'):
                 post['image'] = Image (
+                    self.site,
                     self.board,
                     post['tim'], post['ext'].encode('utf8'),
                     post['filename'].encode('utf8'),
@@ -79,6 +81,7 @@ class Thread (WebEntity):
 
             posts.append (
                 Post (
+                    site   = self.site,
                     name   = name,
                     time   = post['time'],
                     board  = self.board,

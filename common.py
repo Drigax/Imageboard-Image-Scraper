@@ -6,7 +6,6 @@ import logging
 
 from iwi.core import WebEntity
 from iwi.web  import Links
-
 from defaults import defaults
 
 __all__ = ['CommonParser', 'OfflineParser', 'TripcodeParser',

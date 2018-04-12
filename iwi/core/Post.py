@@ -10,9 +10,12 @@ class Post (WebEntity):
     Represents a post with a tripcode.
     """
     def __init__ (self,
+                  site,
                   board=None,  thread=None, post=None,
                   name=None,   time=None,
                   public=None, secure=None, image=None):
+        
+        self.site = site
         self.board, self.thread = board, thread
         self.post = post
 
@@ -91,7 +94,7 @@ class Post (WebEntity):
         """
         Returns an url to the post.
         """
-        return Links.createURL (
+        return self.site.createURL (
             '/{self.board}/thread/{self.thread}'.format(self=self),
             'p{self.post}'.format(self=self)
         )

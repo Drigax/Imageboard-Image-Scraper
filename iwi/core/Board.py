@@ -10,12 +10,13 @@ class Board (WebEntity):
     Represents a board.
     """
     default_object = []
-
-    def __init__ (self, board):
+    
+    def __init__ (self, board, site):
         """
-        Initializes an instance from a board.
+        Initializes an instance from a board and a Site.
         """
         self.board = board
+        self.site = site
 
     def __repr__ (self):
         """
@@ -28,7 +29,7 @@ class Board (WebEntity):
         """
         Returns an url to the corresponding API json page.
         """
-        return Links.createAPIURL (
+        return self.site.links.createAPIURL (
             '/{self.board}/threads.json'.format(self=self)
         )
 
@@ -37,7 +38,7 @@ class Board (WebEntity):
         """
         Returns an url to the board.
         """
-        return Links.createURL('/{self.board}/'.format(self=self))
+        return self.site.links.createURL('/{self.board}/'.format(self=self))
 
     def process (self):
         """
@@ -49,7 +50,7 @@ class Board (WebEntity):
         for page in pages:
             for thread in page['threads']:
                 threads.append (
-                    Thread(self.board, thread['no'])
+                    Thread(self.board, thread['no'], self.site)
                 )
 
         return threads

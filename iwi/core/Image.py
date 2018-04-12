@@ -8,7 +8,8 @@ class Image (WebEntity):
     """
     Represents an image.
     """
-    def __init__ (self, board, tim, ext, filename, md5, fsize, w, h):
+    def __init__ (self, site, board, tim, ext, filename, md5, fsize, w, h):
+        self.site = site
         self.board = board
         self.tim = tim
         self.ext = ext
@@ -50,7 +51,7 @@ class Image (WebEntity):
         """
         Returns an url to the image.
         """
-        return Links.createImageURL (
+        return self.site.createImageURL (
             '/{self.board}/{self.tim}{self.ext}'.format(self=self)
         )
 

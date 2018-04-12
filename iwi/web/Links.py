@@ -4,27 +4,28 @@ import urlparse
 __all__ = ['Links']
 
 class Links (object):
-    """
-    Utility class for URL creation.
-    """
-    scheme = 'http'
-    netloc = 'boards.4chan.org'
-    apiloc = 'a.4cdn.org'
-    imgloc = 'i.4cdn.org'
+    
+    def __init__ (self):
+        """
+        Utility class for URL creation.
+        """
+        self.scheme = 'http'
+        self.netloc = 'nota.real.netloc'
+        self.apiloc = 'nota.real.apiloc'
+        self.imgloc = 'nota.real.imgloc'
 
     board_pattern  = re.compile(r'/(\w+)$')
     page_pattern   = re.compile(r'/(\w+)/(\d+)$')
     thread_pattern = re.compile(r'/(\w+)/thread/(\d+)')
 
-    @classmethod
-    def __makeURL (cls, path, netloc, fragment=''):
+    def __makeURL (self, path, netloc, fragment=''):
         """
         Creates an URL based on path, whether it is an API URL and optionally
         a fragment for a specific post.
         """
         return urlparse.urlunparse (
             urlparse.ParseResult (
-                scheme   = cls.scheme,
+                scheme   = self.scheme,
                 netloc   = netloc,
                 path     = path,
                 params   = '',
@@ -33,23 +34,51 @@ class Links (object):
             )
         )
 
-    @classmethod
-    def createURL (cls, path, fragment=''):
+    def createURL (self, path, fragment=''):
         """
         Generates an URL based on a specific path and an optional fragment.
         """
-        return cls.__makeURL(path, cls.netloc, fragment)
+        return self.__makeURL(path, self.netloc, fragment)
 
-    @classmethod
-    def createAPIURL (cls, path):
+    def createAPIURL (self, path):
         """
         Generates an API URL based on a specific path.
         """
-        return cls.__makeURL(path, cls.apiloc)
+        return self.__makeURL(path, self.apiloc)
 
-    @classmethod
-    def createImageURL (cls, path):
+    def createImageURL (self, path):
         """
         Generates an Image URL based on a specific path.
         """
-        return cls.__makeURL(path, cls.imgloc)
+        return self.__makeURL(path, self.imgloc)
+
+class FourChanLinks (Links):
+    def __init__ (self):
+        """
+        Utility class for URL creation.
+        """
+        self.scheme = super(FourChanLinks,self).scheme
+        self.netloc = 'boards.4chan.org'
+        self.apiloc = 'a.4cdn.org'
+        self.imgloc = 'i.4cdn.org'
+
+class ArchivedMoeLinks (Links):
+    def __init__ (self):
+        """
+        Utility class for URL creation.
+        """
+        self.scheme = super(ArchivedMoeLinks,self).scheme
+        self.netloc = 'archived.moe'
+        self.apiloc = 'archived.moe'
+        self.imgloc = 'archived.moe'
+
+class TheBArchiveLinks(Links):
+    def __init__ (self):
+        """
+        Utility class for URL creation.
+        """
+        self.scheme = super(TheBArchiveLinks,self).scheme
+        self.netloc = 'thebarchive.com'
+        self.apiloc = 'thebarchive.com'
+        self.imgloc = 'thebarchive.com'
+

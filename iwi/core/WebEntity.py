@@ -61,7 +61,8 @@ class WebEntity (object):
         Downloads the API URL contents, decodes them and returns the resulting
         object, or the default value if that fails.
         """
-        return self.decode(self.download(bypass_cache=bypass_cache))
+        data = self.download(bypass_cache=bypass_cache)
+        return self.decode(data)
 
     def process (self):
         """
